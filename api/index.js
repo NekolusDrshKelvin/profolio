@@ -10,55 +10,32 @@ app.use(cors({
   methods: ["GET", "POST", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type"]
 }));
-
 app.use(express.json());
 
-// Vercel writable temp storage
+// NOTE: /tmp is writable on Vercel, but resets sometimes
 const DB_FILE = "/tmp/messages.json";
 
 function readDb() {
   if (!fs.existsSync(DB_FILE)) fs.writeFileSync(DB_FILE, JSON.stringify([]));
   return JSON.parse(fs.readFileSync(DB_FILE, "utf-8"));
 }
-
 function writeDb(data) {
   fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2));
 }
 
-app.get("/api/health", (req, res) => {
-  res.json({ status: "OK", time: new Date().toISOString() });
-});
-
-app.get("/api/messages", (req, res) => {
-  const items = readDb()
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  res.json({ items });
-});
+app.get("/api/health", (req, res) => res.json({ status: "OK" }));
+app.get("/api/messages", (req, res) => res.json({ items: readDb() }));
 
 app.post("/api/messages", (req, res) => {
   const { name, email, message } = req.body || {};
-
-  if (!name || name.length < 2)
-    return res.status(400).json({ message: "Name too short" });
-
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-    return res.status(400).json({ message: "Invalid email" });
-
-  if (!message || message.length < 10)
-    return res.status(400).json({ message: "Message too short" });
+  if (!name || name.trim().length < 2) return res.status(400).json({ message: "Name min 2 chars" });
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) return res.status(400).json({ message: "Invalid email" });
+  if (!message || message.trim().length < 10) return res.status(400).json({ message: "Message min 10 chars" });
 
   const db = readDb();
-  const item = {
-    id: crypto.randomUUID(),
-    name,
-    email,
-    message,
-    createdAt: new Date().toISOString()
-  };
-
+  const item = { id: crypto.randomUUID(), name, email, message, createdAt: new Date().toISOString() };
   db.push(item);
   writeDb(db);
-
   res.status(201).json({ ok: true, item });
 });
 
