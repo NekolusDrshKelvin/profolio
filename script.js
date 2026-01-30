@@ -91,7 +91,6 @@ async function apiFetch(path, options = {}) {
   const url = `${API_BASE}${path}`;
   const res = await fetch(url, options);
 
-  // Try read JSON (even on errors)
   const text = await res.text();
   let data = {};
   try {
@@ -122,7 +121,6 @@ async function loadMessages() {
     const data = await apiFetch("/api/messages", { method: "GET" });
     renderMessages(data.items || []);
   } catch (err) {
-    // Most common here is CORS or network.
     showMessagesError("Could not load messages. Check API & CORS.");
   }
 }
@@ -131,14 +129,12 @@ async function sendMessage(payload) {
   return apiFetch("/api/messages", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    body: JSON.stringify(payload)
   });
 }
 
 // ====== EVENTS ======
-if (refreshBtn) {
-  refreshBtn.addEventListener("click", loadMessages);
-}
+if (refreshBtn) refreshBtn.addEventListener("click", loadMessages);
 
 if (form) {
   form.addEventListener("submit", async (e) => {
@@ -199,3 +195,4 @@ if (backToTop) {
 // ====== RUN ======
 loadStatus();
 loadMessages();
+
