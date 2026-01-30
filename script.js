@@ -1,5 +1,4 @@
 // ====== CONFIG ======
-// Your deployed API (Vercel)
 const API_BASE = "https://profolio-serverapi.vercel.app";
 
 // ====== ELEMENTS ======
@@ -56,36 +55,6 @@ function showMessagesError(message) {
   msgList.innerHTML = `<div class="text-secondary small">${escapeHtml(message)}</div>`;
 }
 
-function renderMessages(items) {
-  if (!msgList || !msgCountEl || !recentMsgEl) return;
-
-  if (!items || items.length === 0) {
-    msgList.innerHTML = `<div class="text-secondary small">No messages yet.</div>`;
-    msgCountEl.textContent = "0";
-    recentMsgEl.textContent = "—";
-    return;
-  }
-
-  msgCountEl.textContent = String(items.length);
-  recentMsgEl.textContent = `${items[0].name}: ${items[0].message}`;
-
-  msgList.innerHTML = items
-    .map((m) => {
-      const dateText = m.createdAt ? new Date(m.createdAt).toLocaleString() : "";
-      return `
-        <div class="msg">
-          <div class="d-flex justify-content-between gap-2 flex-wrap">
-            <div class="fw-semibold">${escapeHtml(m.name || "")}</div>
-            <div class="text-secondary small">${escapeHtml(dateText)}</div>
-          </div>
-          <div class="text-secondary small">${escapeHtml(m.email || "")}</div>
-          <div class="mt-2">${escapeHtml(m.message || "")}</div>
-        </div>
-      `;
-    })
-    .join("");
-}
-
 // ====== API ======
 async function apiFetch(path, options = {}) {
   const url = `${API_BASE}${path}`;
@@ -133,6 +102,64 @@ async function sendMessage(payload) {
   });
 }
 
+// ✅ DELETE message (NEW)
+async function deleteMessage(id) {
+  if (!id) return;
+
+  const ok = confirm("Delete this message?");
+  if (!ok) return;
+
+  try {
+    await apiFetch(`/api/messages/${id}`, { method: "DELETE" });
+    await loadMessages();
+  } catch (err) {
+    alert(err.message || "Failed to delete message.");
+  }
+}
+
+// Make deleteMessage available to onclick in HTML
+window.deleteMessage = deleteMessage;
+
+// ====== RENDER ======
+function renderMessages(items) {
+  if (!msgList || !msgCountEl || !recentMsgEl) return;
+
+  if (!items || items.length === 0) {
+    msgList.innerHTML = `<div class="text-secondary small">No messages yet.</div>`;
+    msgCountEl.textContent = "0";
+    recentMsgEl.textContent = "—";
+    return;
+  }
+
+  msgCountEl.textContent = String(items.length);
+  recentMsgEl.textContent = `${items[0].name}: ${items[0].message}`;
+
+  msgList.innerHTML = items.map(m => {
+    const dateText = m.createdAt ? new Date(m.createdAt).toLocaleString() : "";
+    return `
+      <div class="msg">
+        <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
+          <div>
+            <div class="fw-semibold">${escapeHtml(m.name || "")}</div>
+            <div class="text-secondary small">${escapeHtml(m.email || "")}</div>
+          </div>
+
+          <div class="d-flex align-items-center gap-2">
+            <div class="text-secondary small">${escapeHtml(dateText)}</div>
+            <button class="btn btn-sm btn-outline-danger"
+                    onclick="deleteMessage('${escapeHtml(m.id || "")}')"
+                    title="Delete">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-2">${escapeHtml(m.message || "")}</div>
+      </div>
+    `;
+  }).join("");
+}
+
 // ====== EVENTS ======
 if (refreshBtn) refreshBtn.addEventListener("click", loadMessages);
 
@@ -171,7 +198,7 @@ if (form) {
 
       if (formStatus) formStatus.textContent = "Sent ✅";
       form.reset();
-      [nameEl, emailEl, messageEl].forEach((el) => el && el.classList.remove("is-valid"));
+      [nameEl, emailEl, messageEl].forEach(el => el && el.classList.remove("is-valid"));
 
       await loadMessages();
     } catch (err) {
@@ -195,4 +222,3 @@ if (backToTop) {
 // ====== RUN ======
 loadStatus();
 loadMessages();
-
