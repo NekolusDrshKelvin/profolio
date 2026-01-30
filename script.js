@@ -89,7 +89,7 @@ async function loadMessages() {
   try {
     const data = await apiFetch("/api/messages", { method: "GET" });
     renderMessages(data.items || []);
-  } catch (err) {
+  } catch {
     showMessagesError("Could not load messages. Check API & CORS.");
   }
 }
@@ -102,12 +102,10 @@ async function sendMessage(payload) {
   });
 }
 
-// ✅ DELETE message (NEW)
+// ✅ DELETE message
 async function deleteMessage(id) {
   if (!id) return;
-
-  const ok = confirm("Delete this message?");
-  if (!ok) return;
+  if (!confirm("Delete this message?")) return;
 
   try {
     await apiFetch(`/api/messages/${id}`, { method: "DELETE" });
@@ -116,8 +114,7 @@ async function deleteMessage(id) {
     alert(err.message || "Failed to delete message.");
   }
 }
-
-// Make deleteMessage available to onclick in HTML
+// allow onclick="deleteMessage('id')"
 window.deleteMessage = deleteMessage;
 
 // ====== RENDER ======
@@ -136,6 +133,7 @@ function renderMessages(items) {
 
   msgList.innerHTML = items.map(m => {
     const dateText = m.createdAt ? new Date(m.createdAt).toLocaleString() : "";
+    const safeId = String(m.id || "").replaceAll("'", ""); // prevent quote break
     return `
       <div class="msg">
         <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
@@ -147,7 +145,7 @@ function renderMessages(items) {
           <div class="d-flex align-items-center gap-2">
             <div class="text-secondary small">${escapeHtml(dateText)}</div>
             <button class="btn btn-sm btn-outline-danger"
-                    onclick="deleteMessage('${escapeHtml(m.id || "")}')"
+                    onclick="deleteMessage('${safeId}')"
                     title="Delete">
               <i class="bi bi-trash"></i>
             </button>
