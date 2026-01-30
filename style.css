@@ -1,0 +1,277 @@
+:root{
+  --bg:#ffffff;
+  --card:#ffffff;
+  --stroke:#e5e7eb;
+  --text:#0f172a;
+  --muted:#64748b;
+  --primary:#6366f1;
+  --primary-soft:#eef2ff;
+  --shadow:0 18px 40px rgba(15,23,42,.08);
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior: smooth;
+}
+
+body{
+  margin:0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  overflow-x:hidden;
+  line-height: 1.6;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+.text-secondary{
+  color: var(--muted)!important;
+}
+
+/* ========== Layout ========== */
+
+.section-pad{
+  padding: 96px 0;
+}
+
+@media (max-width: 991px){
+  .section-pad{
+    padding: 76px 0;
+  }
+}
+
+.hero{
+  padding-top: 120px;
+  padding-bottom: 70px;
+}
+
+/* ========== Navbar ========== */
+
+.glass-nav{
+  background:#ffffffcc;
+  backdrop-filter: blur(10px);
+  border-bottom:1px solid var(--stroke);
+}
+
+.navbar .nav-link{
+  color: var(--muted);
+  font-weight:500;
+  transition: color .2s ease;
+}
+
+.navbar .nav-link:hover{
+  color: var(--text);
+}
+
+.brand-dot{
+  width:10px;
+  height:10px;
+  border-radius:999px;
+  background: var(--primary);
+  display:inline-block;
+}
+
+/* ========== Cards ========== */
+
+.glass{
+  background: var(--card);
+  border:1px solid var(--stroke);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
+/* ========== Badges & Pills ========== */
+
+.badge-soft{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  padding:8px 14px;
+  border-radius:999px;
+  background: var(--primary-soft);
+  color:#4338ca;
+  font-weight:600;
+}
+
+.pill{
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--stroke);
+  background: #ffffff;
+  color: var(--muted);
+  font-size: .9rem;
+}
+
+/* ========== Mini Stats ========== */
+
+.mini-card{
+  border-radius:18px;
+}
+
+.mini-num{
+  font-size:1.35rem;
+  font-weight:800;
+}
+
+/* ========== Profile ========== */
+
+.profile-card{
+  border-radius:24px;
+}
+
+.profile-img{
+  width:96px;
+  height:96px;
+  border-radius:24px;
+  object-fit:cover;
+  border:1px solid var(--stroke);
+  background:#f1f5f9;
+}
+
+/* ========== Recent Message ========== */
+
+.recent-box{
+  border:1px dashed var(--stroke);
+  border-radius:16px;
+  padding:12px 14px;
+  color: var(--muted);
+  background:#f8fafc;
+}
+
+/* ========== Projects ========== */
+
+.project-card{
+  border-radius:22px;
+}
+
+.project-icon{
+  width:56px;
+  height:56px;
+  border-radius:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: var(--primary-soft);
+  color:#4338ca;
+  font-size:1.4rem;
+}
+
+/* ========== Contact Items ========== */
+
+.contact-item{
+  display:flex;
+  gap:12px;
+  padding:12px 0;
+  border-bottom:1px dashed var(--stroke);
+}
+
+.contact-item:last-child{
+  border-bottom:0;
+}
+
+.contact-item i{
+  font-size:1.2rem;
+}
+
+/* ========== Messages List ========== */
+
+#msgList .msg{
+  border:1px solid var(--stroke);
+  background:#f8fafc;
+  border-radius:16px;
+  padding:12px 14px;
+  margin-bottom:10px;
+}
+
+/* ========== Forms ========== */
+
+.form-control{
+  background:#ffffff;
+  border:1px solid var(--stroke);
+}
+
+.form-control:focus{
+  border-color: var(--primary);
+  box-shadow: 0 0 0 .15rem rgba(99,102,241,.15);
+}
+
+.form-label{
+  font-weight:500;
+}
+
+/* ========== Buttons ========== */
+
+.btn-primary{
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.btn-primary:hover{
+  filter: brightness(.95);
+}
+
+.btn-outline-light{
+  border-color: var(--stroke);
+  color: var(--text);
+}
+
+.btn-outline-light:hover{
+  background:#f1f5f9;
+}
+
+/* ========== Footer ========== */
+
+.social-mini{
+  width:40px;
+  height:40px;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid var(--stroke);
+  background:#ffffff;
+}
+
+/* ========== Back To Top ========== */
+
+.back-to-top{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  width:46px;
+  height:46px;
+  border-radius:16px;
+  border:1px solid var(--stroke);
+  background:#ffffff;
+  box-shadow: var(--shadow);
+  opacity:0;
+  transform: translateY(10px);
+  pointer-events:none;
+  transition: all .25s ease;
+}
+
+.back-to-top.show{
+  opacity:1;
+  transform: translateY(0);
+  pointer-events:auto;
+}
+
+/* ========== Small Improvements ========== */
+
+hr{
+  border-color: var(--stroke);
+}
+
+code{
+  background:#f1f5f9;
+  padding:2px 6px;
+  border-radius:6px;
+  font-size:.85rem;
+}
